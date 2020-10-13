@@ -1,0 +1,91 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+
+    compileOptions {
+        kotlinOptions.freeCompilerArgs += [
+                '-module-name', "com.github.ChuckerTeam.Chucker.library",
+                "-Xexplicit-apistrict"
+        ]
+    }
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        versionName "1"
+        versionCode 1
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    lintOptions {
+        warningsAsErrors true
+        abortOnError true
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                useJUnitPlatform()
+            }
+        }
+    }
+
+    resourcePrefix 'chucker_'
+}
+
+dependencies {
+    def kotlinVersion = '1.4.10'
+    def coroutineVersion = '1.3.9'
+
+    // Google libraries
+    def constraintLayoutVersion = '2.0.1'
+    def materialComponentsVersion = '1.2.1'
+    def roomVersion = '2.2.5'
+    def fragmentVersion = '1.2.5'
+    def lifecycleVersion = '2.2.0'
+    def paletteKtxVersion = '1.0.0'
+
+    // Networking
+    def gsonVersion = '2.8.6'
+    def okhttp3Version = '3.12.10'
+
+    // grpc
+    def grpcVersion = "1.30.0"
+    def grpcKotlinVersion = "0.1.5" // CURRENT_GRPC_KOTLIN_VERSION
+    api "io.grpc:grpc-protobuf:$grpcVersion"
+    api "io.grpc:grpc-stub:$grpcVersion"
+    def withoutGrpcProtobuf = { exclude group: 'io.grpc', module: 'grpc-protobuf' }
+    api "io.grpc:grpc-kotlin-stub:$grpcKotlinVersion", withoutGrpcProtobuf
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    implementation "com.google.android.material:material:$materialComponentsVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "androidx.palette:palette-ktx:$paletteKtxVersion"
+
+    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
+
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    api "com.squareup.okhttp3:okhttp:$okhttp3Version"
+
+}
