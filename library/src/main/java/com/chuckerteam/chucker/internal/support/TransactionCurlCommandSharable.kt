@@ -19,10 +19,10 @@ internal class TransactionCurlCommandSharable(
 
             writeUtf8("\"")
             headers.forEachIndexed { index, header ->
-                writeUtf8("${header.name}: ${header.value}")
                 if (index > 0) {
                     writeUtf8(", ")
                 }
+                writeUtf8("${header.name}: ${header.value}")
             }
             writeUtf8("\"")
         }
