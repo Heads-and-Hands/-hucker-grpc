@@ -92,7 +92,9 @@ public class GrpcChuckerInterceptor(
 
             transaction.apply {
                 responseCode = status.code.name
-                error = (if (status != Status.OK) errorMessage else status.cause?.toString())
+                if (status != Status.OK) {
+                    error = if (errorMessage?.isEmpty() == true) null else errorMessage
+                }
                 responseDate = System.currentTimeMillis()
                 tookMs = (responseDate ?: 0L) - (requestDate ?: 0L)
             }
