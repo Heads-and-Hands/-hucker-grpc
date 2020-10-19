@@ -20,6 +20,7 @@ public class GrpcChuckerInterceptor(
     private val port: Int = 0,
     private val context: Context,
     private val collector: ChuckerCollector = ChuckerCollector(context),
+    private val onErrorMapper: OnErrorMapper? = null,
 ) : ClientInterceptor {
 
     override fun <M, R> interceptCall(
@@ -87,13 +88,15 @@ public class GrpcChuckerInterceptor(
         }
 
         override fun onClose(status: Status, metadata: Metadata) {
+            val errorMessage = onErrorMapper?.mapErrorMessageToString(status, metadata) ?: status.cause?.toString()
+
             transaction.apply {
                 responseCode = status.code.name
-                error = status.cause?.toString()
-
+                error = (if (status != Status.OK) errorMessage else status.cause?.toString())
                 responseDate = System.currentTimeMillis()
                 tookMs = (responseDate ?: 0L) - (requestDate ?: 0L)
             }
+
             responseListener.onClose(status, metadata)
             collector.onResponseReceived(transaction)
         }
