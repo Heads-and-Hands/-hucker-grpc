@@ -83,7 +83,7 @@ internal class Transaction(
     val responseSummaryText: String?
         get() {
             return when (status) {
-                Status.Failed -> error
+                Status.Failed -> "Error"
                 Status.Requested -> null
                 else -> "$responseCode ${responseMessage ?: ""}"
             }
