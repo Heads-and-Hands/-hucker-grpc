@@ -51,7 +51,7 @@ dependencies {
 
     // Google libraries
     def constraintLayoutVersion = '2.0.4'
-    def materialComponentsVersion = '1.2.1'
+    def materialComponentsVersion = '1.3.0'
     def roomVersion = '2.2.5'
     def fragmentVersion = '1.2.5'
     def lifecycleVersion = '2.2.0'
