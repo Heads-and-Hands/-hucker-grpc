@@ -14,6 +14,7 @@ import io.grpc.ForwardingClientCall
 import io.grpc.Metadata
 import io.grpc.MethodDescriptor
 import io.grpc.Status
+import io.grpc.StatusException
 
 public class GrpcChuckerInterceptor(
     private val address: String = "",
@@ -26,7 +27,7 @@ public class GrpcChuckerInterceptor(
     override fun <M, R> interceptCall(
         methodDescriptor: MethodDescriptor<M, R>,
         callOptions: CallOptions,
-        next: Channel
+        next: Channel,
     ): ClientCall<M, R> {
         val transaction = Transaction()
         transaction.apply {
@@ -66,7 +67,7 @@ public class GrpcChuckerInterceptor(
 
     private inner class BackendListener<R>(
         var responseListener: ClientCall.Listener<R>,
-        var transaction: Transaction
+        var transaction: Transaction,
     ) :
         ClientCall.Listener<R>() {
 
@@ -88,7 +89,9 @@ public class GrpcChuckerInterceptor(
         }
 
         override fun onClose(status: Status, metadata: Metadata) {
-            val errorMessage = onErrorMapper?.mapErrorMessageToString(status, metadata) ?: status.cause?.toString()
+            val statusException = StatusException(status, metadata)
+            var errorMessage = onErrorMapper?.mapErrorMessageToString(status, metadata) ?: status.cause?.toString()
+            errorMessage += (if (errorMessage?.isEmpty() == true) "" else "\n\n\n") + statusException.message
 
             transaction.apply {
                 responseCode = status.code.name
@@ -110,7 +113,7 @@ public class GrpcChuckerInterceptor(
 
     private open class BackendForwardingClientCall<M, R> protected constructor(
         method: MethodDescriptor<M, R>,
-        delegate: ClientCall<M, R>?
+        delegate: ClientCall<M, R>?,
     ) : ForwardingClientCall.SimpleForwardingClientCall<M, R>(delegate) {
         var methodName: String = method.fullMethodName
     }
