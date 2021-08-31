@@ -49,7 +49,11 @@ internal class TransactionDetailsSharable(
 
         writeUtf8(
             if (transaction.responseBody.isNullOrBlank()) {
-                context.getString(R.string.chucker_body_empty)
+                if (transaction.error.isNullOrEmpty()) {
+                    context.getString(R.string.chucker_body_empty)
+                } else {
+                    transaction.error.orEmpty()
+                }
             } else {
                 transaction.getFormattedResponseBody()
             }
