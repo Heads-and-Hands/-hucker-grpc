@@ -89,9 +89,7 @@ public class GrpcChuckerInterceptor(
         }
 
         override fun onClose(status: Status, metadata: Metadata) {
-            val statusException = StatusException(status, metadata)
-            var errorMessage = onErrorMapper?.mapErrorMessageToString(status, metadata) ?: status.cause?.toString()
-            errorMessage += (if (errorMessage?.isEmpty() == true) "" else "\n\n\n") + statusException.message
+            val errorMessage = onErrorMapper?.mapErrorMessageToString(status, metadata) ?: status.cause?.toString()
 
             transaction.apply {
                 responseCode = status.code.name
