@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.4.30'
+        kotlinVersion = '1.6.21'
         androidGradleVersion = '4.1.2'
         coroutineVersion = '1.3.9'
 
@@ -28,7 +28,7 @@ buildscript {
 
         // Testing
         androidxTestCoreVersion = '1.3.0'
-        junitGradlePluignVersion = '1.6.2.0'
+        junitGradlePluignVersion = '1.8.2.0'
         junitVersion = '5.7.0'
         mockkVersion = '1.10.2'
         robolectricVersion = '4.4'
@@ -37,7 +37,7 @@ buildscript {
     }
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
         gradlePluginPortal()
     }
@@ -57,7 +57,7 @@ allprojects {
     group = GROUP
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 
