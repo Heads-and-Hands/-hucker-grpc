@@ -43,12 +43,18 @@ internal class NotificationHelper(val context: Context) {
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+    private val pendingIntentScreenFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
+
     private val transactionsScreenIntent by lazy {
         PendingIntent.getActivity(
             context,
             TRANSACTION_NOTIFICATION_ID,
             Chucker.getLaunchIntent(context),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            pendingIntentScreenFlags
         )
     }
 
@@ -57,7 +63,7 @@ internal class NotificationHelper(val context: Context) {
             context,
             ERROR_NOTIFICATION_ID,
             Chucker.getLaunchIntent(context, Chucker.SCREEN_ERROR),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            pendingIntentScreenFlags
         )
     }
 
@@ -155,7 +161,11 @@ internal class NotificationHelper(val context: Context) {
                 context,
                 INTENT_REQUEST_CODE,
                 deleteIntent,
-                PendingIntent.FLAG_ONE_SHOT
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+                } else {
+                    PendingIntent.FLAG_ONE_SHOT
+                }
             )
             return NotificationCompat.Action(R.drawable.chucker_ic_delete_white, clearTitle, intent)
         }
